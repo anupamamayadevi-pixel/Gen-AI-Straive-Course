@@ -34,6 +34,7 @@ jobs:
 
       # Step to cache Python dependencies (pip packages)
       - name: Cache Python dependencies
+        id: cache # ADDED: Assigning an ID so the next step can reference the cache result
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -53,15 +54,12 @@ jobs:
       - name: prime-cache-f4a5bc2
         run: |
           # The actions/cache step exports a variable named 'cache-hit'
-          # If the cache was restored successfully, core.setOutput('cache-hit', 'true') is run.
+          # This now correctly uses the output from the step with id: cache
           if [ "${{ steps.cache.outputs.cache-hit }}" == "true" ]; then
             echo "Cache hit for key cache-f4a5bc2."
           else
             echo "Cache miss for key cache-f4a5bc2. Dependencies will be installed."
           fi
-        # The 'id: cache' is needed on the caching step to refer to its output.
-        # Temporarily adding it here for context, although typically added directly to the step.
-        # The step below is moved to directly use the cache output.
       
       - name: Run tests
         # Replace 'pytest' with your actual test command
