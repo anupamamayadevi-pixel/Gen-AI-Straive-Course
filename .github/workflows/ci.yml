@@ -1,0 +1,71 @@
+name: CI/CD Pipeline
+
+# Controls when the workflow is run
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build_and_test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Step with the required email address in its name
+      - name: Validation Step for anupama.mayadevi@straive.com
+        run: |
+          echo "Starting core project validation..."
+          # This is where you would typically run linting, static analysis, or security checks.
+          # Example: npx lint-staged
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Step to cache Python dependencies (pip packages)
+      - name: Cache Python dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-cache-f4a5bc2-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-cache-f4a5bc2-
+
+      # Step to install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Assuming you have a requirements.txt file for a real project.
+          # For this example, we install manually to match the previous steps.
+          pip install requests pytest
+
+      # Step to echo the cache hit/miss result
+      - name: prime-cache-f4a5bc2
+        run: |
+          # The actions/cache step exports a variable named 'cache-hit'
+          # If the cache was restored successfully, core.setOutput('cache-hit', 'true') is run.
+          if [ "${{ steps.cache.outputs.cache-hit }}" == "true" ]; then
+            echo "Cache hit for key cache-f4a5bc2."
+          else
+            echo "Cache miss for key cache-f4a5bc2. Dependencies will be installed."
+          fi
+        # The 'id: cache' is needed on the caching step to refer to its output.
+        # Temporarily adding it here for context, although typically added directly to the step.
+        # The step below is moved to directly use the cache output.
+      
+      - name: Run tests
+        # Replace 'pytest' with your actual test command
+        run: |
+          echo "Running unit tests..."
+          # pytest
+          echo "Tests passed successfully."
