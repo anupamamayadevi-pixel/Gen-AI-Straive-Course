@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
 
       # Step with the required email address in its name
-      - name: Validation Step for anupama.mayadevi@straive.com
+      - name: anupama.mayadevi@straive.com
         run: |
           echo "Starting core project validation..."
           # This is where you would typically run linting, static analysis, or security checks.
